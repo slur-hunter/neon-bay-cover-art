@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -8,95 +8,68 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand"><span class="brand-mark">NEON BAY</span></div>
-  <div class="brand-text">
-    <h1>Cover Art Studio</h1>
-    <p>Turn any photo and a caption into a poster-style cover, right in your browser. Photos never leave your machine.</p>
-  </div>
+<header>
+  <h1>Neon Bay Cover Art</h1>
+  <p>Turn a photo and a caption into a GTA-style poster. Photos stay on your machine, nothing is uploaded.</p>
 </header>
-
-<main class="layout">
-  <section class="preview-pane" aria-label="Cover preview">
-    <canvas id="preview" width="900" height="900"></canvas>
-    <p class="hint">Click a panel on the cover to select it, then crop it below.</p>
+<main>
+  <section class="preview">
+    <canvas id="cover" width="1080" height="1080"></canvas>
+    <p id="status" aria-live="polite">Load a photo to start.</p>
   </section>
-
-  <aside class="controls" aria-label="Cover controls">
-    <section class="card">
-      <h2>Photos</h2>
-      <div class="row">
-        <label class="file-button">Add photos
-          <input id="photoFiles" type="file" accept="image/*" multiple>
-        </label>
-        <button id="loadSamples" type="button">Load samples</button>
-      </div>
-      <div id="tray" class="tray"></div>
-      <p id="trayHint" class="muted">Load the samples or add your own photos to begin.</p>
-    </section>
-
-    <section class="card">
-      <h2>Layout</h2>
-      <div id="layoutChoices" class="choices"></div>
-    </section>
-
-    <section class="card">
-      <h2>Caption</h2>
-      <label class="field">Caption
-        <input id="caption" type="text" maxlength="40" autocomplete="off">
+  <aside class="controls">
+    <section>
+      <h2>1. Photos</h2>
+      <label class="file-label">Add photos
+        <input type="file" id="photos" accept="image/*" multiple>
       </label>
-      <label class="field">Tagline
-        <input id="tagline" type="text" maxlength="40" autocomplete="off">
-      </label>
-      <span class="field-label">Caption ink</span>
-      <div id="inkSwatches" class="swatches"></div>
+      <button type="button" id="samples">Load sample photos</button>
+      <ul id="photo-list"></ul>
     </section>
-
-    <section class="card">
-      <h2>Colour grade</h2>
-      <div id="gradeChoices" class="choices"></div>
-      <label class="field">Strength
-        <span class="slider-row">
-          <input id="strength" type="range" min="0" max="100" step="1">
-          <output id="strengthValue">70%</output>
-        </span>
+    <section>
+      <h2>2. Layout</h2>
+      <div class="button-row" id="layout-buttons"></div>
+      <div class="button-row" id="size-buttons"></div>
+    </section>
+    <section>
+      <h2>3. Panel</h2>
+      <div class="button-row" id="panel-buttons"></div>
+      <label>Photo
+        <select id="panel-photo"></select>
+      </label>
+      <label>Zoom <span id="zoom-val">1.00×</span>
+        <input type="range" id="zoom" min="1" max="3" step="0.05" value="1">
+      </label>
+      <label>Pan X <span id="ox-val">0</span>
+        <input type="range" id="ox" min="-1" max="1" step="0.05" value="0">
+      </label>
+      <label>Pan Y <span id="oy-val">0</span>
+        <input type="range" id="oy" min="-1" max="1" step="0.05" value="0">
       </label>
     </section>
-
-    <section class="card">
-      <h2 id="panelLabel">Panel 1</h2>
-      <label class="field">Photo in this panel
-        <select id="panelPhoto"></select>
+    <section>
+      <h2>4. Caption</h2>
+      <label>Caption
+        <input type="text" id="caption" value="Sunset Heist" maxlength="40">
       </label>
-      <label class="field">Zoom
-        <span class="slider-row">
-          <input id="zoom" type="range" min="1" max="3" step="0.05">
-          <output id="zoomValue">1.00x</output>
-        </span>
+      <label>Tagline
+        <input type="text" id="tagline" value="VICE CITY • 2026" maxlength="40">
       </label>
-      <label class="field">Pan left / right
-        <span class="slider-row">
-          <input id="panX" type="range" min="-1" max="1" step="0.05">
-          <output id="panXValue">0.00</output>
-        </span>
+      <div class="button-row" id="color-buttons"></div>
+      <label>Grade
+        <select id="grade"></select>
       </label>
-      <label class="field">Pan up / down
-        <span class="slider-row">
-          <input id="panY" type="range" min="-1" max="1" step="0.05">
-          <output id="panYValue">0.00</output>
-        </span>
+      <label>Grade strength <span id="grade-val">70%</span>
+        <input type="range" id="grade-strength" min="0" max="1" step="0.05" value="0.7">
       </label>
     </section>
-
-    <section class="card export-card">
-      <h2>Export PNG</h2>
-      <div id="sizeChoices" class="choices"></div>
-      <button id="exportButton" type="button" class="export-button">Export PNG</button>
-      <p id="exportStatus" class="muted">No export yet.</p>
+    <section>
+      <h2>5. Export</h2>
+      <button type="button" id="export">Export PNG</button>
+      <p class="hint">Exports at the size picked in step 2: 1080 x 1080, 1080 x 1350 or 1920 x 1080.</p>
     </section>
   </aside>
 </main>
-
 <script type="module" src="src/main.js"></script>
 </body>
 </html>
