@@ -3,68 +3,100 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Neon Bay Cover Art — GTA-style poster maker</title>
-<link rel="stylesheet" href="./style.css">
+<title>Neon Bay Cover Art</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls" aria-label="Cover controls">
-    <h1>Neon Bay Cover Art</h1>
-    <p class="lede">Your photos + a caption, made into a multi-panel poster with a Vice City sunset and neon grade. Photos never leave your machine.</p>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">NEON BAY</span></div>
+  <div class="brand-text">
+    <h1>Cover Art Studio</h1>
+    <p>Turn any photo and a caption into a poster-style cover, right in your browser. Photos never leave your machine.</p>
+  </div>
+</header>
 
-    <fieldset>
-      <legend>1 · Photos</legend>
-      <label class="file-label">Add photos from your machine
-        <input id="photos" type="file" accept="image/*" multiple>
-      </label>
-      <button id="samples" type="button">Load the two sample photos</button>
-      <ul id="photo-list" class="photo-list" aria-label="Loaded photos"></ul>
-      <p class="hint">Click a photo, then click a panel on the cover to put it there.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>2 · Layout &amp; panels</legend>
-      <div id="layout-buttons" class="row" role="group" aria-label="Layout"></div>
-      <div class="row" id="panel-buttons" role="group" aria-label="Panel"></div>
-      <label>Photo in this panel
-        <select id="panel-photo"></select>
-      </label>
-      <label>Zoom <span class="val" id="zoom-val">1.00×</span>
-        <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1">
-      </label>
-      <label>Move left / right <span class="val" id="ox-val">0</span>
-        <input id="ox" type="range" min="-1" max="1" step="0.05" value="0">
-      </label>
-      <label>Move up / down <span class="val" id="oy-val">0</span>
-        <input id="oy" type="range" min="-1" max="1" step="0.05" value="0">
-      </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>3 · Words &amp; grade</legend>
-      <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-      <label>Tagline <input id="tagline" type="text" maxlength="40" value="VICE CITY • 2026"></label>
-      <div class="row" id="color-buttons" role="group" aria-label="Caption colour"></div>
-      <label>Colour grade
-        <select id="grade"></select>
-      </label>
-      <label>Grade strength <span class="val" id="grade-val">70%</span>
-        <input id="grade-strength" type="range" min="0" max="1" step="0.05" value="0.7">
-      </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>4 · Export</legend>
-      <div class="row" id="size-buttons" role="group" aria-label="Export size"></div>
-      <button id="export" type="button" class="primary">Export PNG</button>
-      <p id="status" role="status"></p>
-    </fieldset>
+<main class="layout">
+  <section class="preview-pane" aria-label="Cover preview">
+    <canvas id="preview" width="900" height="900"></canvas>
+    <p class="hint">Click a panel on the cover to select it, then crop it below.</p>
   </section>
-  <section class="preview" aria-label="Cover preview">
-    <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
-    <p class="hint">Click a panel on the cover to select it, then crop it with the sliders.</p>
-  </section>
+
+  <aside class="controls" aria-label="Cover controls">
+    <section class="card">
+      <h2>Photos</h2>
+      <div class="row">
+        <label class="file-button">Add photos
+          <input id="photoFiles" type="file" accept="image/*" multiple>
+        </label>
+        <button id="loadSamples" type="button">Load samples</button>
+      </div>
+      <div id="tray" class="tray"></div>
+      <p id="trayHint" class="muted">Load the samples or add your own photos to begin.</p>
+    </section>
+
+    <section class="card">
+      <h2>Layout</h2>
+      <div id="layoutChoices" class="choices"></div>
+    </section>
+
+    <section class="card">
+      <h2>Caption</h2>
+      <label class="field">Caption
+        <input id="caption" type="text" maxlength="40" autocomplete="off">
+      </label>
+      <label class="field">Tagline
+        <input id="tagline" type="text" maxlength="40" autocomplete="off">
+      </label>
+      <span class="field-label">Caption ink</span>
+      <div id="inkSwatches" class="swatches"></div>
+    </section>
+
+    <section class="card">
+      <h2>Colour grade</h2>
+      <div id="gradeChoices" class="choices"></div>
+      <label class="field">Strength
+        <span class="slider-row">
+          <input id="strength" type="range" min="0" max="100" step="1">
+          <output id="strengthValue">70%</output>
+        </span>
+      </label>
+    </section>
+
+    <section class="card">
+      <h2 id="panelLabel">Panel 1</h2>
+      <label class="field">Photo in this panel
+        <select id="panelPhoto"></select>
+      </label>
+      <label class="field">Zoom
+        <span class="slider-row">
+          <input id="zoom" type="range" min="1" max="3" step="0.05">
+          <output id="zoomValue">1.00x</output>
+        </span>
+      </label>
+      <label class="field">Pan left / right
+        <span class="slider-row">
+          <input id="panX" type="range" min="-1" max="1" step="0.05">
+          <output id="panXValue">0.00</output>
+        </span>
+      </label>
+      <label class="field">Pan up / down
+        <span class="slider-row">
+          <input id="panY" type="range" min="-1" max="1" step="0.05">
+          <output id="panYValue">0.00</output>
+        </span>
+      </label>
+    </section>
+
+    <section class="card export-card">
+      <h2>Export PNG</h2>
+      <div id="sizeChoices" class="choices"></div>
+      <button id="exportButton" type="button" class="export-button">Export PNG</button>
+      <p id="exportStatus" class="muted">No export yet.</p>
+    </section>
+  </aside>
 </main>
-<script type="module" src="./src/main.js"></script>
+
+<script type="module" src="src/main.js"></script>
 </body>
 </html>

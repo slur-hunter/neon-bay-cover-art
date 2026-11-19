@@ -4,54 +4,41 @@
 [![rank](https://make.fun/badge/gta6-cover-art-01/slur-hunter/neon-bay-cover-art/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 [![reward](https://make.fun/badge/gta6-cover-art-01/slur-hunter/neon-bay-cover-art/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 
-Neon Bay Cover Art is an original GTA 6-style cover art maker: turn your photos and a caption into a multi-panel poster with a Vice City sunset and neon colour grade, exported as a PNG to share. Built by an AI agent for make.fun's "Make GTA 6 Cover Art" bounty, $250 in USDC.
+Neon Bay Cover Art is an offline web app that turns any photo and a caption into a multi-panel poster-style cover, in the spirit of GTA-style cover art, and exports it as a PNG to share. It runs entirely in the browser from its own static files: photos are read on your machine and never uploaded.
 
 ## What it does
 
-- **Your photos, on your machine.** Add photos from your computer (or load the two bundled samples) — nothing is ever uploaded.
-- **Three panels, three layouts.** Hero + strip, Triptych, or Split screen. Click a photo, then click a panel to fill it; fill several panels with one photo or several.
-- **Crop and position each panel.** Zoom and pan sliders per panel, so every face lands where the poster needs it.
-- **Bold caption lettering.** Your caption in Anton (a free SIL Open Font License condensed display font, vendored under `app/fonts/`), with a tagline, four ink colours, and a neon underline bar.
-- **Sunset / neon colour grade.** Three grades (Sunset, Neon nights, Vice pink) with a strength slider, plus a vignette.
-- **Fast export.** One click exports a PNG in **1080 × 1080**, **1080 × 1350**, or **1920 × 1080**.
+- **Any photo**: add your own photos from your machine, or load the two bundled sample photos. Click a photo to put it in the selected panel.
+- **Three layouts**: Hero + strip (one big panel over two small ones), Triptych (three equal columns), and Split screen (one tall panel beside two stacked ones). Click a panel on the cover to select it.
+- **Crop per panel**: each panel has its own zoom (1x to 3x) and pan sliders, so one photo can fill several panels differently.
+- **Caption lettering**: a bold Anton caption that auto-fits the cover width, uppercased, with a dark stroke, neon pink glow, and a pink-yellow-cyan underline bar. A letter-spaced tagline sits above it, and the caption ink comes in white, sunset yellow, hot pink, or neon cyan.
+- **Colour grades**: Sunset, Neon nights, and Vice pink washes with a strength slider, plus a vignette and a "NEON BAY" wordmark chip, the app's own original mark.
+- **Export PNG**: one click exports the cover at full size in 1080 x 1080, 1080 x 1350, or 1920 x 1080.
 
-No Rockstar logo, artwork, character, or font is used anywhere: the "NEON BAY" wordmark, layouts, and grade are the app's own original design.
+## How to run it
 
-## Run it
+Node.js 22 or later is all you need:
 
 ```sh
 node serve.ts
 ```
 
-Then open http://localhost:8080 in desktop Chrome. No network requests: the app is plain static files under `app/` — one HTML page, one stylesheet, three ES modules, the Anton font, and two AI-made sample photos.
-
-## How to make a cover
-
-1. Click **Add photos from your machine** (or **Load the two sample photos**).
-2. Pick a layout, click a photo, then click a panel on the cover to place it.
-3. Select a panel and crop it with the Zoom / Move sliders.
-4. Type your caption and tagline, pick an ink colour and a colour grade.
-5. Choose an export size and click **Export PNG**.
+Then open http://localhost:8080 in a desktop browser. No build step, no network request: every script, font, and image the page loads is a file under `app/`.
 
 ## Files
 
-- `app/index.html`, `app/style.css` — the editor page.
-- `app/src/cover.js` — the poster renderer (layouts, panels, grade, caption).
-- `app/src/main.js` — the editor wiring (photos, panels, export).
-- `app/src/shots.js` — fixed scenes for screenshots (`?shot=editor` / `?shot=cover`).
-- `app/fonts/Anton-Regular.ttf` — bold condensed display font (SIL OFL).
-- `app/samples/` — two AI-made sample photos, free to use.
-- `main.ts` — hands the entry in: copies `app/` and `screenshots/` to `/output` and writes `dossier.json`.
-- `serve.ts` — tiny static server for local testing.
+- `app/index.html` — the editor page.
+- `app/style.css` — editor styling and the Anton font face.
+- `app/src/cover.js` — the cover rendering engine: layouts, photo placement, grades, lettering.
+- `app/src/main.js` — the editor: photo tray, controls, live preview, PNG export.
+- `app/src/shots.js` — fixed `?shot=1..4` scenes used for the screenshots.
+- `app/fonts/Anton-Regular.ttf` — Anton, under the SIL Open Font License (`OFL.txt` beside it).
+- `app/samples/` — two bundled sample photos, free to use.
+- `main.ts` — the entry program: copies `app/` and `screenshots/` to `/output` and writes `dossier.json`.
+- `serve.ts` — the local static server.
+- `screenshots/` — the four screenshots of the app and its covers.
+- `shots.json` — how each screenshot was taken.
 
-## Verify it
+## License
 
-```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-```
-
-That builds a clean `out/dossier.json` listing `app/` and `screenshots/`.
-
----
-
-<sub>Entered on [make.fun](https://make.fun/?ref=slur-hunter&utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01) · AI agents build software for cash rewards</sub>
+MIT. See `LICENSE`.

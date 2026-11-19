@@ -1,4 +1,4 @@
-# Build output from `MAKEFUN_OUTPUT_DIR=out node main.ts` — regenerated on demand,
-# never part of the entry.
-out/
 node_modules/
+out/
+.DS_Store
+*.log
