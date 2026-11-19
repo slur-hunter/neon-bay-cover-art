@@ -1,93 +1,58 @@
 // Neon Bay Cover Art — fixed scenes for screenshots.
-//
-// A `?shot=` query on the editor page sets up one scene instead of the bare
-// editor, so a screenshot captures the app at work. Shot 1 is the cover
-// itself, shot 2 the editor with a photo loaded, shots 3 and 4 the other two
-// post sizes. Cover shots hide the editor chrome and show only the canvas.
-//
-// The scene is ready once the samples are loaded and the Anton font is in:
-// the caller polls window.__shotReady. window.__errors collects page errors
-// for the test harness, and window.__ready is set once the page loads.
+// A ?shot=1..4 query sets the app to one scene instead of the empty editor,
+// so the maker's screenshots show the app at work and the covers it exports.
+// shot 1 = the cover itself, shot 2 = the editor with photos loaded,
+// shot 3 = a portrait cover, shot 4 = a wide cover. window.__shotReady is
+// set once the scene is drawn and the Anton font is loaded.
 
-window.__errors = [];
-window.addEventListener('error', (e) => window.__errors.push(String(e.message || e.error)));
-window.__ready = true;
+import { state, tray, ready, render, loadSamples, setExportSize } from './main.js';
 
-/**
- * Runs one shot scene. `api` is the editor wiring from main.js: loading the
- * samples, setting caption, tagline, layout, grade and size, placing photos
- * and crops, redrawing, and reporting whether the font is ready.
- */
-export async function runShot(shot, params, api) {
-  const scenes = {
-    1: {
-      cover: true,
-      setup: async () => {
-        await api.loadSamples();
-        api.setLayout('hero');
-        api.setGrade('sunset');
-        api.setCaption(params.get('caption') || 'Sunset Heist');
-        api.setTagline('VICE CITY • 2026');
-        api.setSize('square');
-        api.setPanelCrop(0, 1.15, 0, -0.1);
-        api.setPanelCrop(1, 1.1, 0.1, 0);
-        api.setPanelCrop(2, 1.1, -0.1, 0);
-      },
-    },
-    2: {
-      cover: false,
-      setup: async () => {
-        await api.loadSamples();
-        api.setLayout('hero');
-        api.setGrade('sunset');
-        api.setCaption(params.get('caption') || 'Sunset Heist');
-        api.setTagline('VICE CITY • 2026');
-        api.setSize('square');
-      },
-    },
-    3: {
-      cover: true,
-      setup: async () => {
-        await api.loadSamples();
-        api.setLayout('triptych');
-        api.setGrade('vice');
-        api.setCaption(params.get('caption') || 'Boulevard Queen');
-        api.setTagline('NEON BAY • 2026');
-        api.setSize('portrait');
-        api.setPanelPhoto(0, 1);
-        api.setPanelPhoto(1, 0);
-        api.setPanelPhoto(2, 1);
-        api.setPanelCrop(0, 1.2, 0, 0);
-        api.setPanelCrop(1, 1.15, 0, -0.1);
-        api.setPanelCrop(2, 1.2, 0.1, 0);
-      },
-    },
-    4: {
-      cover: true,
-      setup: async () => {
-        await api.loadSamples();
-        api.setLayout('split');
-        api.setGrade('neon');
-        api.setCaption(params.get('caption') || 'Night Shift');
-        api.setTagline('NEON BAY • 2026');
-        api.setSize('wide');
-        api.setPanelPhoto(0, 0);
-        api.setPanelPhoto(1, 1);
-        api.setPanelPhoto(2, 0);
-        api.setPanelCrop(0, 1.1, 0, 0);
-        api.setPanelCrop(1, 1.2, -0.1, 0);
-        api.setPanelCrop(2, 1.1, 0.1, -0.1);
-      },
-    },
-  };
+const SHOTS = {
+  1: { layout: 'hero', grade: 'sunset', ink: '#ffffff', caption: 'Sunset Heist', tagline: 'VICE CITY \u2022 2026', size: [1080, 1080], coverOnly: true },
+  2: { layout: 'hero', grade: 'sunset', ink: '#ffffff', caption: 'Sunset Heist', tagline: 'VICE CITY \u2022 2026', size: [1080, 1080], coverOnly: false },
+  3: { layout: 'triptych', grade: 'vice', ink: '#ffd23f', caption: 'Boulevard Queen', tagline: 'VICE CITY \u2022 2026', size: [1080, 1350], coverOnly: true },
+  4: { layout: 'split', grade: 'neon', ink: '#4de8ff', caption: 'Night Shift', tagline: 'VICE CITY \u2022 2026', size: [1920, 1080], coverOnly: true },
+};
 
-  const scene = scenes[shot] ?? scenes[1];
-  if (scene.cover) document.body.classList.add('shot-cover');
-  await scene.setup();
-  api.redraw();
-  if (api.fontReady()) {
-    window.__shotReady = true;
-  } else {
-    window.__shotReadyPending = true;
-  }
+function applyShot(number) {
+  const shot = SHOTS[number];
+  if (!shot) return false;
+  state.layout = shot.layout;
+  state.grade = shot.grade;
+  state.ink = shot.ink;
+  state.caption = shot.caption;
+  state.tagline = shot.tagline;
+  setExportSize(shot.size[0], shot.size[1]);
+  if (shot.coverOnly) document.body.classList.add('shot-cover');
+  const captionInput = document.getElementById('caption');
+  if (captionInput) captionInput.value = shot.caption;
+  const taglineInput = document.getElementById('tagline');
+  if (taglineInput) taglineInput.value = shot.tagline;
+  return true;
 }
+
+export async function setupShot() {
+  const params = new URLSearchParams(window.location.search);
+  const number = Number(params.get('shot') || 0);
+  if (!SHOTS[number]) return false;
+  await ready;
+  await loadSamples();
+  applyShot(number);
+  if (tray.length > 0) {
+    state.panels[0].photo = tray[0];
+    if (tray[1]) state.panels[1].photo = tray[1];
+    if (tray[2]) state.panels[2].photo = tray[2] || tray[0];
+  }
+  try {
+    await document.fonts.load('80px Anton');
+    await document.fonts.ready;
+  } catch (err) {
+    window.__errors.push(String(err.message || err));
+  }
+  render();
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  window.__shotReady = true;
+  return true;
+}
+
+setupShot();

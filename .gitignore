@@ -1,4 +1,4 @@
-node_modules/
+# Neon Bay Cover Art — local build output and editor junk (v4)
 out/
+node_modules/
 .DS_Store
-*.log
