@@ -3,20 +3,67 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Neon Bay Cover Art — GTA-style poster maker</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+  <section class="controls" aria-label="Cover controls">
+    <h1>Neon Bay Cover Art</h1>
+    <p class="lede">Your photos + a caption, made into a multi-panel poster with a Vice City sunset and neon grade. Photos never leave your machine.</p>
+
+    <fieldset>
+      <legend>1 · Photos</legend>
+      <label class="file-label">Add photos from your machine
+        <input id="photos" type="file" accept="image/*" multiple>
+      </label>
+      <button id="samples" type="button">Load the two sample photos</button>
+      <ul id="photo-list" class="photo-list" aria-label="Loaded photos"></ul>
+      <p class="hint">Click a photo, then click a panel on the cover to put it there.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>2 · Layout &amp; panels</legend>
+      <div id="layout-buttons" class="row" role="group" aria-label="Layout"></div>
+      <div class="row" id="panel-buttons" role="group" aria-label="Panel"></div>
+      <label>Photo in this panel
+        <select id="panel-photo"></select>
+      </label>
+      <label>Zoom <span class="val" id="zoom-val">1.00×</span>
+        <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1">
+      </label>
+      <label>Move left / right <span class="val" id="ox-val">0</span>
+        <input id="ox" type="range" min="-1" max="1" step="0.05" value="0">
+      </label>
+      <label>Move up / down <span class="val" id="oy-val">0</span>
+        <input id="oy" type="range" min="-1" max="1" step="0.05" value="0">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>3 · Words &amp; grade</legend>
+      <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
+      <label>Tagline <input id="tagline" type="text" maxlength="40" value="VICE CITY • 2026"></label>
+      <div class="row" id="color-buttons" role="group" aria-label="Caption colour"></div>
+      <label>Colour grade
+        <select id="grade"></select>
+      </label>
+      <label>Grade strength <span class="val" id="grade-val">70%</span>
+        <input id="grade-strength" type="range" min="0" max="1" step="0.05" value="0.7">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>4 · Export</legend>
+      <div class="row" id="size-buttons" role="group" aria-label="Export size"></div>
+      <button id="export" type="button" class="primary">Export PNG</button>
+      <p id="status" role="status"></p>
+    </fieldset>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+  <section class="preview" aria-label="Cover preview">
+    <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+    <p class="hint">Click a panel on the cover to select it, then crop it with the sliders.</p>
+  </section>
 </main>
 <script type="module" src="./src/main.js"></script>
 </body>

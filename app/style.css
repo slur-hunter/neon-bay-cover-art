@@ -1,12 +1,46 @@
-html, body { margin: 0; height: 100%; background: #f2f0f4; color: #1d1b22; font: 15px/1.4 system-ui, sans-serif; }
-.app { display: flex; gap: 32px; align-items: center; justify-content: center; height: 100%; padding: 24px; box-sizing: border-box; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 280px; }
-.controls h1 { margin: 0; font-size: 28px; }
-.controls p { margin: 0; color: #5c5866; }
-label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 8px; border: 1px solid #c9c4d1; border-radius: 6px; }
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 6px; background: #1d1b22; color: #fff; cursor: pointer; }
-canvas { width: min(70vh, 60vw); height: min(70vh, 60vw); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
-body.shot-cover .controls { display: none; }
-body.shot-cover .app { padding: 0; }
-body.shot-cover canvas { width: 100vw; height: 100vh; box-shadow: none; }
+@font-face {
+  font-family: 'Anton';
+  src: url('./fonts/Anton-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body { margin: 0; min-height: 100%; background: #14081f; color: #f5eefb; font: 15px/1.45 system-ui, sans-serif; }
+.app { display: flex; gap: 28px; align-items: flex-start; justify-content: center; padding: 24px; box-sizing: border-box; }
+.controls { display: flex; flex-direction: column; gap: 16px; width: 320px; flex-shrink: 0; }
+.controls h1 { margin: 0; font-family: 'Anton', 'Arial Narrow', sans-serif; font-size: 34px; letter-spacing: 1px; color: #ffd23f; text-transform: uppercase; }
+.lede { margin: 0; color: #c9b8d8; }
+fieldset { border: 1px solid #4a2a63; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; background: #1d0f2e; }
+legend { font-weight: 700; color: #ff5da2; padding: 0 6px; }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 13px; }
+label .val { float: right; font-weight: 400; color: #c9b8d8; }
+input[type=text], select { font: inherit; padding: 8px; border: 1px solid #6b4a86; border-radius: 6px; background: #2a1840; color: #f5eefb; }
+input[type=range] { width: 100%; accent-color: #ff2e88; }
+button { font: inherit; font-weight: 700; padding: 9px 12px; border: 1px solid #6b4a86; border-radius: 6px; background: #2a1840; color: #f5eefb; cursor: pointer; }
+button:hover { border-color: #ff2e88; }
+button.primary { background: #ff2e88; border-color: #ff2e88; color: #fff; font-size: 16px; padding: 12px; }
+button.primary:hover { background: #ff4d9c; }
+button[aria-pressed="true"] { background: #ff2e88; border-color: #ff2e88; color: #fff; }
+button:disabled { opacity: 0.45; cursor: default; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.row button { flex: 1 1 auto; padding: 7px 8px; font-size: 13px; }
+.file-label { cursor: pointer; }
+.file-label input { cursor: pointer; }
+.photo-list { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.photo-list li { display: flex; flex-direction: column; gap: 4px; width: 84px; }
+.photo-list img { width: 84px; height: 84px; object-fit: cover; border-radius: 6px; border: 2px solid transparent; cursor: pointer; display: block; }
+.photo-list li.selected img { border-color: #ffd23f; }
+.photo-list span { font-size: 11px; color: #c9b8d8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hint { margin: 0; color: #9d86b3; font-size: 13px; }
+#status { margin: 0; min-height: 1.4em; color: #4de8ff; }
+.preview { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.preview canvas { width: min(72vh, 62vw); height: auto; max-height: 86vh; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55); cursor: crosshair; background: #14081f; }
+.preview .hint { text-align: center; }
+
+/* Screenshot scenes: cover alone, edge to edge. */
+body.shot-cover { background: #14081f; }
+body.shot-cover .controls, body.shot-cover .preview .hint { display: none; }
+body.shot-cover .app { padding: 0; display: block; }
+body.shot-cover .preview { position: static; display: block; }
+body.shot-cover canvas { width: 100vw; height: 100vh; object-fit: contain; box-shadow: none; cursor: default; }
